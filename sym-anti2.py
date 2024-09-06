@@ -2,12 +2,10 @@ from telegram import Update, Poll
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import time
 import asyncio
-
 forwarding_groups = set()
 last_message_time = {}
 COOLDOWN_TIME = 4
 message_count = 0
-
 async def log_message(user, message_type, context: ContextTypes.DEFAULT_TYPE) -> None:
     global message_count
     message_count += 1
@@ -15,8 +13,14 @@ async def log_message(user, message_type, context: ContextTypes.DEFAULT_TYPE) ->
     print(f"Сообщение #{message_count} от пользователя {user_info}: {message_type}")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text('Здравствуй мой маленький приспешник\nИспользуй /sendmsg [ид группы], что-бы отправить сообщения в группу где состоит бот, от имени бота.\nЧто-то не понятно? Пиши /help')
-
+    message = (
+        "👋 Привет, мой маленький приспешник!\n\n"
+        "Я здесь, чтобы помочь тебе отправлять сообщения в группы от имени бота.\n\n"
+        "🔹 Используй команду /sendmsg [ид группы], чтобы отправить сообщение в группу, где состоит бот.\n"
+        "🔹 Если что-то не понятно, просто напиши /help и я помогу тебе.\n\n"
+    )
+    await update.message.reply_text(message)
+    
 async def sendmsg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not context.args:
         await update.message.reply_text('Использование: /sendmsg [ид группы]')
@@ -84,14 +88,15 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"Всего сообщений переслано: {message_count}")
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
-        "Доступные команды:\n"
-        "/start - Начать работу с ботом\n"
-        "/stats - Показать статистику пересланных сообщений\n"
-        "/sendmsg [ид группы] - Включить/выключить пересылку сообщений для указанной группы\n"
-        "Ид группы можно узнать, вот тут @username_to_id_bot"
+    message = (
+        "🛠️ Доступные команды:\n\n"
+        "🔹 /start - Начать работу с ботом\n"
+        "🔹 /stats - Показать статистику пересланных сообщений\n"
+        "🔹 /sendmsg [ид группы] - Включить/выключить пересылку сообщений для указанной группы\n\n"
+        "ℹ️ Ид группы можно узнать, обратившись к боту: @username_to_id_bot\n\n"
     )
-
+    await update.message.reply_text(message)
+    
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text('Команда не найдена, введите /help')
 
